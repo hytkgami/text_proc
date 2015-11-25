@@ -1,0 +1,1 @@
+File.open(ARGV[1]) {|file| puts file.read.scan(/.*#{ARGV[0]}.*/)}
