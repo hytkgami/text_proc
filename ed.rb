@@ -77,13 +77,29 @@ class Ed
   end
   # p
   def cmd_p(addr: nil)
+    _result = []
     case addr
-    when /\A\d+\z/
-      
+    when /\A\d+\Z/
+      _from = addr.to_i
+      _to = _from
+    when /\A\d+,\d+\Z/
+      _tmp = addr.split(',')
+      _from = _tmp.first.to_i
+      _to = _tmp.last.to_i
+    when /\A,,,\Z/
+      _from = 1
+      _to = @buffer.size
+    when nil
+      _from = @current
+      _to = _from
+    else
+      _from = 1
+      _to = @buffer.size
     end
-    if @current > @buffer.size
-      @current = @buffer.size
-    end
+    _from = 1 if _from < 1
+    _to = @buffer.size if _to > @buffer.size
+    @current = _to
+    _result + @buffer[(_from-1)..(_to-1)]
   end
   # a
   def cmd_a(addr: nil)
