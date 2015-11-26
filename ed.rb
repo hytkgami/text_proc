@@ -48,10 +48,10 @@ class Ed
       else
         if /\A\n\Z/ === @input && @current < @buffer.size
           @current += 1
-          @result = @current
+          @result = @buffer[@current - 1]
         elsif /\A\d+\z/ === @input.chomp
           @current = get_current(index: $&.to_i)
-          @result = @current
+          @result = @buffer[@current - 1]
         else
           @result = '?'
         end
