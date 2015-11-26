@@ -99,8 +99,9 @@ class Ed
       _from = 1
       _to = @buffer.size
     end
-    _from = 1 if _from < 1
-    _to = @buffer.size if _to > @buffer.size
+    if _from < 1 || _to > @buffer.size
+      return '?'
+    end
     @current = _to
     _result + @buffer[(_from-1)..(_to-1)]
   end
