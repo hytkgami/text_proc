@@ -110,20 +110,34 @@ class Ed
   end
   # d
   def cmd_d(addr: nil)
-    if addr
-      _arr = addr.split(',')
-      if _arr.first.int?
-        _from = _arr.first.to_i - 1 
-        _to = _arr.last.to_i - 1
-        if _from < _to
-          @buffer.slice!(_from, _to)
-        else
-          @buffer.slice!(_from)
-        end
-        @current = _from + 1
-      end
+    case addr
+    when /\A\d+\Z/
+      _from = addr.to_i
+      _to = _from
+    when /\A\d+,\d+\Z/
+      _tmp = addr.split(',')
+      _from = _tmp.first.to_i
+      _to = _tmp.last.to_i
+    when /\A,,,\Z/
+      _from = 1
+      _to = @buffer.size
+    when nil
+      _from = @current
+      _to = _from
     else
-      @buffer.slice!(@current - 1)
+      _from = 1
+      _to = @buffer.size
+    end
+    _from = 1 if _from < 1
+    @buffer.slice!((_from - 1)..(_to - 1))
+    @current = get_current(index: _to)
+  end
+
+  def get_current(index: 0)
+    if index > @buffer.size
+      @buffer.size
+    else
+      index
     end
   end
 end
