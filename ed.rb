@@ -49,8 +49,7 @@ class Ed
         if /\A\n\Z/ === @input && @current < @buffer.size
           @current += 1
         elsif /\A\d+\z/ === @input.chomp
-          @current = $&.to_i if $& && $&.int?
-          @current = @buffer.size if @current > @buffer.size
+          @current = get_current(index: $&.to_i)
           @result = @current
         else
           @result = '?'
