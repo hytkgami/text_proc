@@ -125,6 +125,9 @@ class Ed
     when /\A,,,\Z/
       _from = 1
       _to = @buffer.size
+    when /\A\d+,\$\Z/
+      _from = addr.split.first.to_i
+      _to = @buffer.size
     when nil
       _from = @current
       _to = _from
