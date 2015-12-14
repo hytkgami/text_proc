@@ -89,6 +89,9 @@ class Ed
     when /\A,,,\Z/
       _from = 1
       _to = @buffer.size
+    when /\A\d+,\$\Z/
+      _from = addr.split.first.to_i
+      _to = @buffer.size
     when nil
       _from = @current
       _to = _from
@@ -96,8 +99,9 @@ class Ed
       _from = 1
       _to = @buffer.size
     end
-    _from = 1 if _from < 1
-    _to = @buffer.size if _to > @buffer.size
+    if _from < 1 || _to > @buffer.size
+      return '?'
+    end
     @current = _to
     _result + @buffer[(_from-1)..(_to-1)]
   end
@@ -120,6 +124,9 @@ class Ed
       _to = _tmp.last.to_i
     when /\A,,,\Z/
       _from = 1
+      _to = @buffer.size
+    when /\A\d+,\$\Z/
+      _from = addr.split.first.to_i
       _to = @buffer.size
     when nil
       _from = @current
