@@ -53,7 +53,6 @@ class Tokenizer
     @tokens = []
     @program = ARGF.read.tr("^ \n\t", "")
     tokenize
-    p @tokens
   end
 
   def tokenize
@@ -101,10 +100,60 @@ class Executor
     @pc = 0
     @stack = []
     @heap = {}
+    @callStack = []
     loop do
-      # コマンドの処理
+      _, cmd, param = @tokens[@pc]
+      @pc += 1
+      case cmd
+      when :push then @stack << param
+      when :dup then @stack << @stack.last
+      when :outnum then print @stack.pop
+      when :outchar then print @stack.pop.chr
+
+      when :add then calc("+")
+      when :sub then calc("-")
+      when :mul then calc("*")
+      when :div then calc("/")
+      when :mod then calc("%")
+
+      when :jz then jump(param) if @stack.pop == 0
+      when :jn then jump(param) if @stack.pop < 0
+      when :jump then jump(param)
+
+      when :discard then @stack.pop
+      when :exit then exit
+
+      when :store
+        value = @stack.pop
+        address = @stack.pop
+        @heap[address] = value
+      when :call
+        @callStack << @pc
+        jump(param)
+      when :retrive then @stack << @heap[@stack.pop]
+      when :ret then @pc = @callStack.pop
+      when :readchar then @heap[@stack.pop] = $stdin.getc
+      when :readnum then @heap[@stack.pop] = $stdin.gets.to_i
+      when :swap then @stack << @stack.slice!(-2)
+      end
+    end
+  end
+  private
+
+  def calc(op)
+    b = @stack.pop
+    a = @stack.pop
+    @stack.push eval("a #{op} b")
+  end
+
+  def jump(label)
+    @tokens.each_with_index do |token, i|
+      if token == [:flow, :label, label]
+        @pc = i
+        break
+      end
     end
   end
 end
 
-Tokenizer.new
+Executor.new(Tokenizer.new.tokens).run
