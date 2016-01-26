@@ -24,6 +24,7 @@ class Hoge
     @code = ''
     #  memory space for variable
     @memory = {}
+    @attr = ''
   end
 
   def exec(file_name = nil)
@@ -58,9 +59,20 @@ private
     elsif @code =~ /\A\s*([0-9.]+)/
       @code = $'
       return $1.to_f
-    # elsif @code =~ /\A([_a-zA-Z]+[0-9]*)+\z/ #  set variable
-    #   @code = $'
-    #   return $1
+    elsif @code =~ /\A\s*(\w+)\s*(=\s*(.*)\s*)?/ #  set variable
+      unless $3.nil?
+        @code = $3 + $'
+      else
+        @code = $'
+      end
+      @attr = $1
+      if @memory.has_key?($1.to_sym) && $3
+        @memory[$1.to_sym] = expression()
+      elsif !(@memory.has_key?($1.to_sym))
+        @memory[$1.to_sym] = expression()
+      end
+      # 変数トークン
+      return :variable
     elsif @code =~ /\A\s*\z/
       return nil
     end
@@ -116,10 +128,6 @@ private
         raise Exception, "unexpected token"
       end
       return [:mul, minusflg, result]
-    elsif token == :print
-      echo()
-    elsif token == :println
-      echo(1)
     elsif token == :w_quot
       if @code =~ /\A(.*)(")/
         @code = $2 + @code
@@ -130,15 +138,19 @@ private
         @code = $2 + @code
         result = $1
       end
+    elsif token == :variable
+      result = @memory[@attr.to_sym]
+    elsif token == :print
+      echo()
+    elsif token == :println
+      echo(1)
     elsif token.nil?
-
+      # 空文字がきたら何もしない
     else
       raise Exception, "unexpected token"
     end
   end
-=begin
-  if 文は実際に計算を行うわけではないので、実装と切り離す
-=end
+
   def evaluate_if
     _pattern = /\A([0-9.]+)\s+(==|!=)\s+([0-9.]+)\z/
     token = get_token
