@@ -136,7 +136,7 @@ private
         result = $1
       end
     elsif token == :s_quot
-      if @code =~ /\A(.*)(s)/
+      if @code =~ /\A(.*)(')/
         @code = $2 + @code
         result = $1
       end
