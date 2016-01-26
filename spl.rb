@@ -3,7 +3,8 @@ require 'color_echo'
 CE.pickup(/expression|term|factor/, :h_yellow)
 CE.pickup(/unget!|bad_token/, :h_red)
 
-class Hoge
+# Smiley Prompt Language
+class SPL
   #  keywords in this language
   @@keywords = {
     '+' => :add,
@@ -38,7 +39,9 @@ class Hoge
         eval(ex) # print
       }
     else
-      unless File.extname(file_name) == ".cmp"
+      unless File.extname(file_name) == ".spl"
+        CE.once.ch(:h_white, :h_red)
+        print "X-( "
         puts "ERROR : The file is not compact source"
         exit
       end
@@ -46,7 +49,7 @@ class Hoge
         file.each_line do |line|
           @code = line.strip
           ex = expression
-          puts eval(ex)
+          eval(ex)
         end
       end
     end
@@ -125,6 +128,7 @@ private
     elsif token == :lpar
       result = expression()
       unless get_token == :rpar
+        # TODO エラーのときは顔をいれる
         raise Exception, "unexpected token"
       end
       return [:mul, minusflg, result]
@@ -151,20 +155,20 @@ private
     end
   end
 
-  def evaluate_if
-    _pattern = /\A([0-9.]+)\s+(==|!=)\s+([0-9.]+)\z/
-    token = get_token
-    raise Exception, "Could not find '('" unless token == :lpar
-    unless @code =~ _pattern
-      raise Exception, "unexpected conditions"
-    end
-    @code = $'
-    flg = eval("#{$1} #{$2} #{$3}")
-  end
+  # def evaluate_if
+  #   _pattern = /\A([0-9.]+)\s+(==|!=)\s+([0-9.]+)\z/
+  #   token = get_token
+  #   raise Exception, "Could not find '('" unless token == :lpar
+  #   unless @code =~ _pattern
+  #     raise Exception, "unexpected conditions"
+  #   end
+  #   @code = $'
+  #   flg = eval("#{$1} #{$2} #{$3}")
+  # end
 
+  # 出力を担当 evalした結果を出力
   def echo(flg = nil)
-    # 式が渡されると演算結果を出力
-    # 文字列が渡されると文字列を出力
+    CE.once.ch(:h_blue)
     if flg
       if @code.empty?
         print ''
@@ -200,4 +204,4 @@ private
   end
 end
 
-Hoge.new.exec(ARGV[0])
+SPL.new.exec(ARGV[0])
