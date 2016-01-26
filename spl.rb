@@ -40,9 +40,7 @@ class SPL
       }
     else
       unless File.extname(file_name) == ".spl"
-        CE.once.ch(:h_white, :h_red)
-        print "X-( "
-        puts "ERROR : The file is not compact source"
+        error_format("ERROR : The file is not SPL file..")
         exit
       end
       File.open(file_name) do |file|
@@ -155,16 +153,11 @@ private
     end
   end
 
-  # def evaluate_if
-  #   _pattern = /\A([0-9.]+)\s+(==|!=)\s+([0-9.]+)\z/
-  #   token = get_token
-  #   raise Exception, "Could not find '('" unless token == :lpar
-  #   unless @code =~ _pattern
-  #     raise Exception, "unexpected conditions"
-  #   end
-  #   @code = $'
-  #   flg = eval("#{$1} #{$2} #{$3}")
-  # end
+  def error_format(message)
+    CE.once.ch(:h_white, :h_red)
+    print "X-( "
+    puts message
+  end
 
   # 出力を担当 evalした結果を出力
   def echo(flg = nil)
