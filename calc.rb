@@ -130,6 +130,8 @@ private
         @code = $2 + @code
         result = $1
       end
+    elsif token.nil?
+
     else
       raise Exception, "unexpected token"
     end
