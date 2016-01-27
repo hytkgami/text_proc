@@ -126,8 +126,8 @@ private
     elsif token == :lpar
       result = expression()
       unless get_token == :rpar
-        # TODO エラーのときは顔をいれる
-        raise Exception, "unexpected token"
+        error_format("unexpected token")
+        # raise Exception, "unexpected token"
       end
       return [:mul, minusflg, result]
     elsif token == :w_quot
@@ -149,7 +149,8 @@ private
     elsif token.nil?
       # 空文字がきたら何もしない
     else
-      raise Exception, "unexpected token"
+      error_format("unexpected token")
+      # raise Exception, "unexpected token"
     end
   end
 
