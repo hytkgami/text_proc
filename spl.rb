@@ -18,7 +18,8 @@ class SPL
     'print' => :print,
     '\'' => :s_quot,
     '"' => :w_quot,
-    'INPUT' => :input
+    'INPUT' => :input,
+    'OUTPUT' => :println # alias println
   }
 
   def initialize()
