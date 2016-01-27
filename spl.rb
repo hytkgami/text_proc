@@ -1,4 +1,5 @@
 require 'color_echo'
+require 'readline'
 
 CE.pickup(/expression|term|factor/, :h_yellow)
 CE.pickup(/unget!|bad_token/, :h_red)
@@ -157,8 +158,6 @@ private
       echo()
     elsif token == :println
       echo(1)
-    elsif token.nil?
-      # 空文字がきたら何もしない
     else
       error_format("unexpected token")
       # raise Exception, "unexpected token"
@@ -190,9 +189,7 @@ private
   end
   # 入力を担当
   def input()
-    CE.once.ch(:index27)
-    print '>>> '
-    value = gets.chomp
+    value = Readline.readline(">>> ", true)
     @code = value + @code
     result = expression()
   end
