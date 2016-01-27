@@ -17,7 +17,8 @@ class SPL
     'println' => :println,
     'print' => :print,
     '\'' => :s_quot,
-    '"' => :w_quot
+    '"' => :w_quot,
+    'INPUT' => :input
   }
 
   def initialize()
@@ -25,7 +26,7 @@ class SPL
     @code = ''
     #  memory space for variable
     @memory = {}
-    @attr = ''
+    @key = ''
   end
 
   def exec(file_name = nil)
@@ -66,7 +67,7 @@ private
       else
         @code = $'
       end
-      @attr = $1
+      @key = $1
       if @memory.has_key?($1.to_sym) && $3
         @memory[$1.to_sym] = expression()
       elsif !(@memory.has_key?($1.to_sym))
@@ -141,7 +142,9 @@ private
         result = $1
       end
     elsif token == :variable
-      result = @memory[@attr.to_sym]
+      result = @memory[@key.to_sym]
+    elsif token == :input
+      input()
     elsif token == :print
       echo()
     elsif token == :println
@@ -176,6 +179,14 @@ private
         print eval(expression())
       end
     end
+  end
+  # 入力を担当
+  def input()
+    CE.once.ch(:index27)
+    print '>>> '
+    value = gets.chomp
+    @code = value + @code
+    result = expression()
   end
 =begin
   計算はすべてcalcに任せる
