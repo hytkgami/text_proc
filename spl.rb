@@ -188,9 +188,7 @@ private
     @code = value + @code
     result = expression()
   end
-=begin
-  計算はすべてcalcに任せる
-=end
+
   def eval(exp)
     if exp.instance_of?(Array)
       case exp[0]
