@@ -22,6 +22,8 @@ class SPL
     'OUTPUT' => :println # alias println
   }
 
+  @@faces = [':-) ', ':-] ', '; ) ', "👽  ", "👾  "]
+
   def initialize()
     #  insert source codes or standard input
     @code = ''
@@ -33,8 +35,7 @@ class SPL
   def exec(file_name = nil)
     unless file_name
       loop {
-        CE.once.ch(:h_white, :h_blue)
-        print ':-) '
+        prompt()
         @code = STDIN.gets.strip # read
         if %w(quit q exit bye).include? @code then exit end
         ex = expression # eval
@@ -55,6 +56,12 @@ class SPL
     end
   end
 private
+  def prompt()
+    # CE.once.ch(:h_white, :h_blue)
+    CE.once.ch(:h_green)
+    print @@faces.sample
+  end
+
   def get_token()
     if @code =~ /\A\s*(#{@@keywords.keys.map{|t|Regexp.escape(t)}.join('|')})/
       @code = $'
